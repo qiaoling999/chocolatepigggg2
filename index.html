@@ -1,12 +1,149 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-Hant">
 <head>
-<title>Page Title</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini ChatGPT</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f7f7f8;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* 頂部標題列 */
+        header {
+            background: #ffffff;
+            padding: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            border-bottom: 1px solid #ccc;
+            text-align: center;
+        }
+
+        /* 對話區 */
+        #chat {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .msg {
+            max-width: 70%;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            line-height: 1.5;
+        }
+
+        .user {
+            background: #0059ff;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 0;
+        }
+
+        .bot {
+            background: white;
+            border: 1px solid #ccc;
+            margin-right: auto;
+            border-bottom-left-radius: 0;
+        }
+
+        /* 輸入區 */
+        #input-area {
+            display: flex;
+            border-top: 1px solid #ccc;
+            background: #fff;
+            padding: 10px;
+        }
+
+        #input {
+            flex: 1;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #bbb;
+            border-radius: 8px;
+        }
+
+        button {
+            margin-left: 10px;
+            padding: 12px 18px;
+            font-size: 16px;
+            background: #0059ff;
+            border: none;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0041c4;
+        }
+    </style>
 </head>
 <body>
 
-<h1>羅星星消失術</h1>
-<p>沒關係，他在這裡，我心裡</p>
+<header>Mini ChatGPT</header>
+
+<div id="chat"></div>
+
+<div id="input-area">
+    <input id="input" type="text" placeholder="輸入訊息..." onkeypress="if(event.key==='Enter') sendMsg()">
+    <button onclick="sendMsg()">送出</button>
+</div>
+
+<script>
+    const chat = document.getElementById("chat");
+
+    // 簡單模擬 AI 回覆（可自行改成 API）
+    function generateAIResponse(text) {
+        const responses = {
+            "你好": "你好！很高興見到你 🙂",
+            "你是誰": "我是一個簡易版的 Mini ChatGPT，正在模擬 AI 對話。",
+            "chatgpt": "ChatGPT 是一種基於大型語言模型的對話系統，可以理解並生成自然語言。",
+            "你可以做什麼": "我可以簡單回答問題、模擬對話，也能依你需求進行擴充！"
+        };
+
+        // 精準匹配
+        if (responses[text.toLowerCase()]) {
+            return responses[text.toLowerCase()];
+        }
+
+        // 模擬泛用回答
+        return "我了解你的訊息：「" + text + "」，但我還在學習中，可以告訴我更多嗎？";
+    }
+
+    function addMessage(text, sender) {
+        const msg = document.createElement("div");
+        msg.className = "msg " + sender;
+        msg.innerText = text;
+        chat.appendChild(msg);
+
+        // 自動捲到最底部
+        chat.scrollTop = chat.scrollHeight;
+    }
+
+    function sendMsg() {
+        const input = document.getElementById("input");
+        const text = input.value.trim();
+
+        if (!text) return;
+
+        addMessage(text, "user");
+        input.value = "";
+
+        // 模擬思考延遲
+        setTimeout(() => {
+            const reply = generateAIResponse(text);
+            addMessage(reply, "bot");
+        }, 500);
+    }
+</script>
 
 </body>
 </html>
+
