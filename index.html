@@ -14,7 +14,6 @@
             height: 100vh;
         }
 
-        /* 頂部標題列 */
         header {
             background: #ffffff;
             padding: 15px;
@@ -24,7 +23,6 @@
             text-align: center;
         }
 
-        /* 對話區 */
         #chat {
             flex: 1;
             overflow-y: auto;
@@ -53,7 +51,6 @@
             border-bottom-left-radius: 0;
         }
 
-        /* 輸入區 */
         #input-area {
             display: flex;
             border-top: 1px solid #ccc;
@@ -99,51 +96,41 @@
 <script>
     const chat = document.getElementById("chat");
 
-    // 簡單模擬 AI 回覆（可自行改成 API）
-    function generateAIResponse(text) {
-        const responses = {
-            "你好": "你好！很高興見到你 🙂",
-            "你是誰": "我是一個簡易版的 Mini ChatGPT，正在模擬 AI 對話。",
-            "chatgpt": "ChatGPT 是一種基於大型語言模型的對話系統，可以理解並生成自然語言。",
-            "你可以做什麼": "我可以簡單回答問題、模擬對話，也能依你需求進行擴充！"
-        };
-
-        // 精準匹配
-        if (responses[text.toLowerCase()]) {
-            return responses[text.toLowerCase()];
-        }
-
-        // 模擬泛用回答
-        return "我了解你的訊息：「" + text + "」，但我還在學習中，可以告訴我更多嗎？";
-    }
-
     function addMessage(text, sender) {
         const msg = document.createElement("div");
         msg.className = "msg " + sender;
         msg.innerText = text;
         chat.appendChild(msg);
-
-        // 自動捲到最底部
         chat.scrollTop = chat.scrollHeight;
     }
 
-    function sendMsg() {
+    async function sendMsg() {
         const input = document.getElementById("input");
         const text = input.value.trim();
-
         if (!text) return;
 
         addMessage(text, "user");
         input.value = "";
 
-        // 模擬思考延遲
-        setTimeout(() => {
-            const reply = generateAIResponse(text);
-            addMessage(reply, "bot");
-        }, 500);
+        // 加入 loading 提示
+        const loadingMsg = document.createElement("div");
+        loadingMsg.className = "msg bot";
+        loadingMsg.innerText = "AI 正在思考...";
+        chat.appendChild(loadingMsg);
+
+        // 呼叫後端 API
+        const response = await fetch("http://localhost:3000/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: text })
+        });
+
+        const data = await response.json();
+
+        loadingMsg.remove(); 
+        addMessage(data.reply, "bot");
     }
 </script>
 
 </body>
 </html>
-
